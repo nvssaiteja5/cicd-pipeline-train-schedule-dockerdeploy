@@ -1,8 +1,16 @@
 pipeline {
     agent any
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Running build automation'
+                sh './gradlew build --no-daemon'
+                archiveArtifacts artifacts: 'dist/trainSchedule.zip'
+            }
+        }
         stage('Build Docker Image') {
             when {
-                branch 'example-solution'
+                branch 'master'
             }
             steps {
                 script {
@@ -15,7 +23,7 @@ pipeline {
         }
         stage('Push Docker Image') {
             when {
-                branch 'example-solution'
+                branch 'master'
             }
             steps {
                 script {
@@ -28,7 +36,7 @@ pipeline {
         }
         stage('DeployToProduction') {
             when {
-                branch 'example-solution'
+                branch 'master'
             }
             steps {
                 input 'Deploy to Production?'
@@ -47,5 +55,5 @@ pipeline {
                 }
             }
         }
-    
+    }
 }
